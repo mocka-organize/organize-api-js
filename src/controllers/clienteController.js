@@ -2,6 +2,41 @@ import { faceapi, canvas } from '../api/faceapi.js';
 import fs from 'fs';
 import path from 'path';
 import { reconhecerCliente } from '../services/clienteService.js';
+import { prisma } from '../services/prismaService.js';
+
+
+async function criar(req) {
+    try {
+        const dados = req.body;
+        const imagePath = req.file.path;
+
+        const img = await canvas.loadImage(imagePath);
+        const detection = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+
+        // Remove arquivo temporário
+        fs.unlinkSync(imagePath);
+
+        if (!detection) {
+            return res.status(400).json({ type: "warning", description: 'Nenhum rosto detectado na imagem.' });
+        }
+
+        const descriptor = Array.from(detection.descriptor);
+
+        const face = await prisma.clientes.create({
+            data: {
+                ...dados,
+                facial: descriptor,
+            },
+        });
+
+        res.status(201).json({ type: "success", description: 'Registro criado com sucesso!', face });
+    } catch (error) {
+        return { type: "error", description: err.message };
+    }
+}
 
 async function reconhecimento(req) {
     try {
@@ -14,21 +49,24 @@ async function reconhecimento(req) {
 
         fs.unlinkSync(imgPath); // apagar a imagem temporária
 
-    if (!detections.length) {
-        return { sucesso: false, mensagem: "Nenhum rosto detectado" };
-    }
+        if (!detections.length) {
+            return { type: "warning", description: "Nenhum rosto detectado" };
+        }
 
-    const resultados = reconhecerCliente(detections);
+        const resultados = reconhecerCliente(detections);
 
-    if (resultados.length === 0) {
-        return { sucesso: false, mensagem: "Cliente não identificado." };
-    }
+        if (resultados.length === 0) {
+            return { type: "warning", description: "Cliente não identificado." };
+        }
 
-    return { sucesso: true, clientes: resultados };
+        return { type: "success", clientes: resultados };
+
     } catch (err) {
-        console.error(err);
-    return { sucesso: false, erro: err.message };
+        return { type: "error", description: err.message };
     }
 }
 
-export { reconhecimento }
+export { 
+    reconhecimento,
+    criar
+}
