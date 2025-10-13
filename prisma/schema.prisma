@@ -12,8 +12,8 @@ model balcoes {
   balcao_id   Int        @id @unique(map: "balcao_id") @default(autoincrement())
   localizacao String     @db.VarChar(50)
   status      Int
-  created_at  DateTime   @db.DateTime(0)
-  updated_at  DateTime   @db.DateTime(0)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
   consumos    consumos[]
 }
 
@@ -23,8 +23,8 @@ model clientes {
   email      String     @db.VarChar(50)
   foto       String     @db.VarChar(255)
   facial     Json
-  created_at DateTime   @db.DateTime(0)
-  updated_at DateTime   @db.DateTime(0)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
   consumos   consumos[]
 }
 
@@ -32,8 +32,8 @@ model consumos {
   consumo_id Int      @id @unique(map: "consumo_id") @default(autoincrement())
   cliente_id Int
   balcao_id  Int
-  created_at DateTime @db.DateTime(0)
-  updated_at DateTime @db.DateTime(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   clientes   clientes @relation(fields: [cliente_id], references: [cliente_id], onUpdate: Restrict, map: "consumos_fk1")
   balcoes    balcoes  @relation(fields: [balcao_id], references: [balcao_id], onUpdate: Restrict, map: "consumos_fk2")
 
@@ -44,8 +44,8 @@ model consumos {
 model departamentos {
   departamento_id Int        @id @unique(map: "departamento_id") @default(autoincrement())
   nome            String     @db.VarChar(50)
-  created_at      DateTime   @db.DateTime(0)
-  updated_at      DateTime   @db.DateTime(0)
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
   usuarios        usuarios[]
 }
 
@@ -56,8 +56,8 @@ model usuarios {
   senha           String        @db.VarChar(255)
   status          Int
   departamento_id Int
-  created_at      DateTime      @db.DateTime(0)
-  updated_at      DateTime      @db.DateTime(0)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
   departamentos   departamentos @relation(fields: [departamento_id], references: [departamento_id], onUpdate: Restrict, map: "usuarios_fk5")
 
   @@index([departamento_id], map: "usuarios_fk5")

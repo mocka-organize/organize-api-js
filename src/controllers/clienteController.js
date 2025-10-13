@@ -28,13 +28,14 @@ async function criar(req) {
         const face = await prisma.clientes.create({
             data: {
                 ...dados,
+                foto: `${req.protocol}://${req.headers.host}/${imagePath}`,
                 facial: descriptor,
             },
         });
 
-        res.status(201).json({ type: "success", description: 'Registro criado com sucesso!', face });
+        return { type: "success", description: 'Registro criado com sucesso!', face };
     } catch (error) {
-        return { type: "error", description: err.message };
+        return { type: "error", description: error.message };
     }
 }
 
