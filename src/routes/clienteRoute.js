@@ -9,7 +9,7 @@ const storageFacial = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         let extensao = file.originalname.split(".").reverse().shift();
-        cb(null, `facial-${file.originalname.split(".")[0]}-${Date.getMonth()}.${extensao}`);
+        cb(null, `facial-${file.originalname.split(".")[0]}-${new Date().getHours()}${new Date().getMinutes()}.${extensao}`);
     }
 })
 const uploadReconhecimento = multer({ 

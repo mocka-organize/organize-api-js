@@ -16,11 +16,12 @@ async function criar(req) {
             .withFaceLandmarks()
             .withFaceDescriptor();
 
-        // Remove arquivo temporário
-        fs.unlinkSync(imagePath);
+        // Não remover o arquivo aqui: o multer salvou em uploads/facial e este
+        // arquivo deve permanecer disponível via rota estática (/uploads/...).
+        // Caso queira apagar depois, mova ou apague explicitamente em outro fluxo.
 
         if (!detection) {
-            return res.status(400).json({ type: "warning", description: 'Nenhum rosto detectado na imagem.' });
+            return { type: "warning", description: 'Nenhum rosto detectado na imagem.' };
         }
 
         const descriptor = Array.from(detection.descriptor);
@@ -44,30 +45,61 @@ async function reconhecimento(req) {
         const imgPath = path.resolve(req.file.path);
         const img = await canvas.loadImage(imgPath);
 
-        const detections = await faceapi.detectAllFaces(img)
+        const detection = await faceapi
+            .detectAllFaces(img)
             .withFaceLandmarks()
             .withFaceDescriptors();
 
-        fs.unlinkSync(imgPath); // apagar a imagem temporária
-
-        if (!detections.length) {
-            return { type: "warning", description: "Nenhum rosto detectado" };
+        if (!detection.length) {
+            return { 
+                type: "warning", 
+                description: "Nenhum rosto detectado" 
+            };
         }
 
-        const resultados = reconhecerCliente(detections);
+        
+        const resultado = detection[0].descriptor;
 
-        if (resultados.length === 0) {
-            return { type: "warning", description: "Cliente não identificado." };
+        if (resultado.length === 0) {
+            return { 
+                type: "warning", 
+                description: "Cliente não identificado." 
+            };
         }
 
-        return { type: "success", clientes: resultados };
+        const clientes = await prisma.clientes.findMany();
+
+        let melhorMatch = null;
+        let menorDistancia = Infinity;
+
+        for (const cliente of clientes) {
+            const emb = new Float32Array(cliente.facial);
+            const distancia = faceapi.euclideanDistance(resultado, emb);
+
+            if (distancia < menorDistancia) {
+                melhorMatch = cliente,
+                    menorDistancia = distancia
+            }
+        }
+
+        if (menorDistancia < 0.6) {
+            return {
+                type: "success",
+                cliente: melhorMatch
+            };
+        } else {
+            return {
+                type: "warning",
+                description: "Cliente não encontrado."
+            };
+        }
 
     } catch (err) {
         return { type: "error", description: err.message };
     }
 }
 
-export { 
+export {
     reconhecimento,
     criar
 }
