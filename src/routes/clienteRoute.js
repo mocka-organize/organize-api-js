@@ -19,10 +19,36 @@ const uploadReconhecimento = multer({
 const uploadFacial = multer({ storage: storageFacial });
 
 router.post("/", uploadFacial.single('foto'), async (req, res) => {
+    // #swagger.description = "Cria um registro"
+    /* #swagger.consumes = ['multipart/form-data'] */
+    /* #swagger.parameters['nome'] = { in: 'formData', type: 'string', required: true, description: 'Nome do cliente', example: 'nome' } */
+    /* #swagger.parameters['email'] = { in: 'formData', type: 'string', required: true, description: 'E-mail do cliente', example: 'email@email.com' } */
+    /* #swagger.parameters['foto'] = { in: 'formData', type: 'file', name: 'foto', required: true, description: 'Arquivo de imagem' } */
+    /* #swagger.responses[200] = {
+            description: 'Registro criado com sucesso',
+            schema: {
+                type: 'success',
+                description: 'Registro criado com sucesso.',
+            }
+    } */
     res.send(await criar(req));
 });
 
 router.post("/reconhecimento", uploadReconhecimento.single('foto'), async (req, res) => {
+    // #swagger.description = "Reconheci um rosto na imagem"
+    /* #swagger.consumes = ['multipart/form-data'] */
+    /* #swagger.parameters['foto'] = { in: 'formData', type: 'file', name: 'foto', required: true, description: 'Arquivo de imagem para reconhecimento' } */
+    /* #swagger.responses[200] = {
+            description: 'Registro criado com sucesso',
+            schema: {
+                type: 'success',
+                cliente:  {
+                    nome: "nome",
+                    email: "email@email.com",
+                    foto: "https://host/uploads/facial/imagem.jpg"
+                }
+            }
+    } */
     res.send(await reconhecimento(req));
 });
 
