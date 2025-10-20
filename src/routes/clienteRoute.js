@@ -1,6 +1,6 @@
 import express from "express";
 import multer from 'multer';
-import { criar, reconhecimento } from "../controllers/clienteController.js";
+import { buscarTodos, buscarUm, criar, deletar, reconhecimento } from "../controllers/clienteController.js";
 
 const router = express.Router();
 const storageFacial = multer.diskStorage({
@@ -17,6 +17,42 @@ const uploadReconhecimento = multer({
 
  });
 const uploadFacial = multer({ storage: storageFacial });
+
+router.get("/", async (req, res) => {
+    // #swagger.tags = ['Clientes']
+    // #swagger.description = 'Retorna lista de clientes'
+    /* #swagger.responses[200] = {
+            description: 'Retorna lista de clientes',
+            schema: [{
+                id: 1,
+                nome: "nome",
+                email: "email@email.com",
+                foto: "url da imagem",
+                facial: "json da facial",
+                created_at: "data",
+                updated_at: "data"
+            }]
+    } */
+    res.send(await buscarTodos());
+});
+
+router.get("/:id", async (req, res) => {
+    // #swagger.tags = ['Clientes']
+    // #swagger.description = 'Retorna um cliente'
+    /* #swagger.responses[200] = {
+            description: 'Retorna um cliente',
+            schema: {
+                id: 1,
+                nome: "nome",
+                email: "email@email.com",
+                foto: "url da imagem",
+                facial: "json da facial",
+                created_at: "data",
+                updated_at: "data"
+            }
+    } */
+    res.send(await buscarUm(req.params.id));
+});
 
 router.post("/", uploadFacial.single('foto'), async (req, res) => {
     // #swagger.description = "Cria um registro"
@@ -50,6 +86,16 @@ router.post("/reconhecimento", uploadReconhecimento.single('foto'), async (req, 
             }
     } */
     res.send(await reconhecimento(req));
+});
+
+router.delete("/:id", async (req, res) => {
+    // #swagger.tags = ['Clientes']
+    // #swagger.description = 'Deleta um cliente'
+    /* #swagger.responses[200] = {
+            type: 'success', 
+            description: 'Deleta um cliente',
+    } */
+    res.send(await deletar(req.params.id));
 });
 
 export default router;

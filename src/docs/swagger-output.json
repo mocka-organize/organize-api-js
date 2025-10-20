@@ -22,6 +22,75 @@
       }
     },
     "/clientes/": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Retorna lista de clientes",
+        "responses": {
+          "200": {
+            "description": "Retorna lista de clientes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "nome": {
+                    "type": "string",
+                    "example": "nome"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "email@email.com"
+                  },
+                  "foto": {
+                    "type": "string",
+                    "example": "url da imagem"
+                  },
+                  "facial": {
+                    "type": "string",
+                    "example": "json da facial"
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "example": "data"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "example": "data"
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "422": {
+            "description": "Erro interno",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "mensagem do sistema"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
       "post": {
         "description": "Cria um registro",
         "consumes": [
@@ -71,6 +140,121 @@
                 "name": "main"
               }
             }
+          },
+          "422": {
+            "description": "Erro interno",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "mensagem do sistema"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clientes/{id}": {
+      "get": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Retorna um cliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retorna um cliente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 1
+                },
+                "nome": {
+                  "type": "string",
+                  "example": "nome"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email@email.com"
+                },
+                "foto": {
+                  "type": "string",
+                  "example": "url da imagem"
+                },
+                "facial": {
+                  "type": "string",
+                  "example": "json da facial"
+                },
+                "created_at": {
+                  "type": "string",
+                  "example": "data"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "example": "data"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "422": {
+            "description": "Erro interno",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "error"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "mensagem do sistema"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "description": "Deleta um cliente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleta um cliente",
+            "type": "success"
           },
           "422": {
             "description": "Erro interno",

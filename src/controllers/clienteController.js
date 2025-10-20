@@ -1,10 +1,44 @@
 import { faceapi, canvas } from '../api/faceapi.js';
-import fs from 'fs';
 import path from 'path';
-import { reconhecerCliente } from '../services/clienteService.js';
 import { prisma } from '../services/prismaService.js';
 
+async function buscarTodos() {
+    try {
+        return await prisma.clientes.findMany();
+    } catch (error) {
+        return { type: "error", description: error.message };
+    }
+}
 
+async function buscarUm(id) {
+    try {
+        return await prisma.clientes.findFirst({
+            where: {
+                cliente_id: Number(id)
+            }
+        });
+    } catch (error) {
+        return { type: "error", description: error.message };
+    }
+}
+
+async function deletar(id) {
+    try {
+        const result = await prisma.clientes.delete({
+            where: {
+                cliente_id: Number(id)
+            }
+        });
+        if(result){
+            return {
+                type:"success",
+                description: "Registro apagado com sucesso!"
+            }
+        }
+    } catch (error) {
+        return { type: "error", description: error.message };
+    }
+}
 async function criar(req) {
     try {
         const dados = req.body;
@@ -104,5 +138,8 @@ async function reconhecimento(req) {
 
 export {
     reconhecimento,
-    criar
+    criar,
+    buscarTodos,
+    buscarUm,
+    deletar
 }
