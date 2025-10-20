@@ -26,10 +26,13 @@ async function criar(req) {
 
         const descriptor = Array.from(detection.descriptor);
 
+        const relativePath = path.relative(process.cwd(), imagePath).split(path.sep).join('/');
+        const fotoUrl = `${req.protocol}://${req.get('host')}/${relativePath}`;
+
         const face = await prisma.clientes.create({
             data: {
                 ...dados,
-                foto: `${req.protocol}://${req.headers.host}/${imagePath}`,
+                foto: fotoUrl,
                 facial: descriptor,
             },
         });

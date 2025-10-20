@@ -5,6 +5,7 @@ import { loadModels } from "./src/api/faceapi.js";
 import { checkContentType } from "./src/middlewares/index.js";
 import swaggerOutput from "./src/docs/swagger-output.json" with {type: "json"}
 import swaggerUi from "swagger-ui-express";
+import path from 'path';
 
 await loadModels();
 
@@ -16,7 +17,7 @@ app.get("/", (req, res) => {
     res.redirect("/docs");
 });
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerOutput))
-app.use("/uploads", express.static("./uploads/"));
+app.use("/uploads", express.static(path.join(process.cwd(), 'uploads')));
 app.use("/models", express.static("./../models"));
 app.use("/clientes", 
     checkContentType, 
