@@ -1,0 +1,20 @@
+[
+    {
+        "clienteId": 1,
+        "nome": "Maria Silva",
+        "embedding": [
+            0.123,
+            -0.045,
+            0.078
+        ]
+    },
+    {
+        "clienteId": 2,
+        "nome": "João Souza",
+        "embedding": [
+            0.054,
+            0.112,
+            -0.034
+        ]
+    }
+]

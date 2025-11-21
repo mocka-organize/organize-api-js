@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model balcoes {
+  balcao_id   Int        @id @unique(map: "balcao_id") @default(autoincrement())
+  localizacao String     @db.VarChar(50)
+  status      Int
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  consumos    consumos[]
+}
+
+model clientes {
+  cliente_id Int        @id @unique(map: "cliente_id") @default(autoincrement())
+  nome       String     @db.VarChar(50)
+  email      String     @db.VarChar(50)
+  foto       String     @db.VarChar(255)
+  facial     Json
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  consumos   consumos[]
+}
+
+model consumos {
+  consumo_id Int      @id @unique(map: "consumo_id") @default(autoincrement())
+  cliente_id Int
+  balcao_id  Int
+  consumo    String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  clientes   clientes @relation(fields: [cliente_id], references: [cliente_id], onUpdate: Restrict, map: "consumos_fk1")
+  balcoes    balcoes  @relation(fields: [balcao_id], references: [balcao_id], onUpdate: Restrict, map: "consumos_fk2")
+
+  @@index([cliente_id], map: "consumos_fk1")
+  @@index([balcao_id], map: "consumos_fk2")
+}
+
+model departamentos {
+  departamento_id Int        @id @unique(map: "departamento_id") @default(autoincrement())
+  nome            String     @db.VarChar(50)
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt
+  usuarios        usuarios[]
+}
+
+model usuarios {
+  usuario_id      Int           @id @unique(map: "usuario_id") @default(autoincrement())
+  nome            String        @db.VarChar(50)
+  email           String        @db.VarChar(50)
+  senha           String        @db.VarChar(255)
+  status          Int
+  departamento_id Int
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  departamentos   departamentos @relation(fields: [departamento_id], references: [departamento_id], onUpdate: Restrict, map: "usuarios_fk5")
+
+  @@index([departamento_id], map: "usuarios_fk5")
+}
