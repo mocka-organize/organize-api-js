@@ -4,7 +4,11 @@ import jwt from "jsonwebtoken";
 
 async function buscarTodos() {
     try {
-        return await prisma.usuarios.findMany();
+        return await prisma.usuarios.findMany({
+		include: {
+			departamentos: true	
+		}
+	});
     } catch (error) {
         return { type: "error", description: error.message };
     }
@@ -15,7 +19,10 @@ async function buscarUm(id) {
         return await prisma.usuarios.findFirst({
             where: {
                 usuario_id: Number(id)
-            }
+            },
+		include: {
+			departamentos: true
+		}
         });
     } catch (error) {
         return { type: "error", description: error.message };
@@ -54,9 +61,12 @@ async function criar(dados) {
 
 async function editar(dados, id) {
     try {
-        const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
+	if(dados.senha){
+		const senhaCriptografada = await bcrypt.hash(dados.senha, 10);
+		dados.senha = senhaCriptografada;		
+	}
         const result = await prisma.usuarios.update({
-            data: { ...dados, senha: senhaCriptografada },
+            data: dados,
             where: {
                 usuario_id: Number(id)
             }

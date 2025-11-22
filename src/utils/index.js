@@ -9,7 +9,7 @@ export const rotaProtegida = (req, res, next) => {
         if (token) {
             jwt.verify(token, process.env.CHAVE, (error) => {
                 if (error) {
-                    res.json({
+                    res.status(401).json({
                         type: "warning",
                         description: error.message
                     })
@@ -18,7 +18,7 @@ export const rotaProtegida = (req, res, next) => {
                 }
             });
         } else {
-            res.json({
+            res.status(401).json({
                 type: "warning",
                 description: "Token é necessário"
             })
