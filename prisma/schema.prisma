@@ -32,6 +32,10 @@ model consumos {
   consumo_id Int      @id @unique(map: "consumo_id") @default(autoincrement())
   cliente_id Int
   balcao_id  Int
+<<<<<<< HEAD
+=======
+  consumo    String   @db.VarChar(255)
+>>>>>>> f90f89bbe264fc53f5571f6a7c4dd9d26707b447
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   clientes   clientes @relation(fields: [cliente_id], references: [cliente_id], onUpdate: Restrict, map: "consumos_fk1")
