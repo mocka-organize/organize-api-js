@@ -77,6 +77,47 @@ async function criar(req) {
     }
 }
 
+async function editar(req) {
+    try {
+        const dados = req.body;
+        const imagePath = req.file.path;
+
+        const img = await canvas.loadImage(imagePath);
+        const detection = await faceapi
+            .detectSingleFace(img)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+
+        // Não remover o arquivo aqui: o multer salvou em uploads/facial e este
+        // arquivo deve permanecer disponível via rota estática (/uploads/...).
+        // Caso queira apagar depois, mova ou apague explicitamente em outro fluxo.
+
+        if (!detection) {
+            return { type: "warning", description: 'Nenhum rosto detectado na imagem.' };
+        }
+
+        const descriptor = Array.from(detection.descriptor);
+
+        const relativePath = path.relative(process.cwd(), imagePath).split(path.sep).join('/');
+        const fotoUrl = `${req.protocol}://${req.get('host')}/${relativePath}`;
+
+        const face = await prisma.clientes.update({
+            data: {
+                ...dados,
+                foto: fotoUrl,
+                facial: descriptor,
+            },
+            where: {
+                cliente_id: Number(req.params.id)
+            }
+        });
+
+        return { type: "success", description: 'Registro criado com sucesso!', face };
+    } catch (error) {
+        return { type: "error", description: error.message };
+    }
+}
+
 async function reconhecimento(req) {
     try {
         const imgPath = path.resolve(req.file.path);
