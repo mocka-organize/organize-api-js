@@ -148,18 +148,9 @@ async function reconhecimento(req) {
             };
         }
 
-        
         const resultado = detection[0].descriptor;
 
-        if (resultado.length === 0) {
-            return { 
-                type: "warning", 
-                description: "Cliente não identificado." 
-            };
-        }
-
         const clientes = await prisma.clientes.findMany();
-
         let melhorMatch = null;
         let menorDistancia = Infinity;
 
@@ -168,27 +159,47 @@ async function reconhecimento(req) {
             const distancia = faceapi.euclideanDistance(resultado, emb);
 
             if (distancia < menorDistancia) {
-                melhorMatch = cliente,
-                    menorDistancia = distancia
+                melhorMatch = cliente;
+                menorDistancia = distancia;
             }
         }
 
         if (menorDistancia < 0.6) {
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0);
+
+            const consumoHoje = await prisma.consumos.findFirst({
+                where: {
+                    cliente_id: melhorMatch.cliente_id,
+                    created_at: {
+                        gte: hoje 
+                    }
+                }
+            });
+
+            if (!consumoHoje) {
+                await prisma.consumos.create({
+                    data: {
+                        cliente_id: melhorMatch.cliente_id,
+                        balcao_id: req.body.balcao_id ?? 1,
+                        consumo: null
+                    }
+                });
+            }
+
             return {
                 type: "success",
                 cliente: melhorMatch
             };
-        } else {
-            return {
-                type: "warning",
-                description: "Cliente não encontrado."
-            };
         }
+
+        return { type: "warning", description: "Cliente não encontrado." };
 
     } catch (err) {
         return { type: "error", description: err.message };
     }
 }
+
 
 export {
     reconhecimento,
