@@ -180,6 +180,7 @@ async function reconhecimento(req) {
 export {
     reconhecimento,
     criar,
+    editar,
     buscarTodos,
     buscarUm,
     deletar
