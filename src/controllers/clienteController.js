@@ -81,12 +81,15 @@ async function editar(req) {
     try {
         const dados = req.body;
 
+        // Remove cliente_id do body se vier
+        if ("cliente_id" in dados) {
+            delete dados.cliente_id;
+        }
+
         let fotoUrl = null;
         let descriptor = null;
 
-        // Só processa imagem SE houver imagem
         if (req.file) {
-
             const imagePath = req.file.path;
 
             const img = await canvas.loadImage(imagePath);
@@ -105,7 +108,6 @@ async function editar(req) {
             fotoUrl = `${req.protocol}://${req.get('host')}/${relativePath}`;
         }
 
-        // Monta o que será atualizado
         const updateData = {
             ...dados,
         };
@@ -126,6 +128,7 @@ async function editar(req) {
         return { type: "error", description: error.message };
     }
 }
+
 
 
 async function reconhecimento(req) {
