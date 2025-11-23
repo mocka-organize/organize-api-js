@@ -2,7 +2,12 @@ import { prisma } from '../services/prismaService.js';
 
 async function buscarTodos() {
     try {
-        return await prisma.consumos.findMany();
+        return await prisma.consumos.findMany({
+            include: {
+                balcoes: true,
+                clientes: true
+            }
+        });
     } catch (error) {
         return { type: "error", description: error.message };
     }
