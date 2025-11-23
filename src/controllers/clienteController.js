@@ -181,7 +181,7 @@ async function reconhecimento(req) {
                 await prisma.consumos.create({
                     data: {
                         cliente_id: melhorMatch.cliente_id,
-                        balcao_id: req.body.balcao_id ?? 1,
+                        balcao_id: Number(req.body.balcao_id) ?? 1,
                         consumo: null
                     }
                 });
