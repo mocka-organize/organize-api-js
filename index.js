@@ -12,6 +12,7 @@ import swaggerUi from "swagger-ui-express";
 import path from 'path';
 import { rotaProtegida } from "./src/utils/index.js";
 import { login } from "./src/controllers/usuarioController.js";
+import { prisma } from './services/prismaService.js';
 
 await loadModels();
 
