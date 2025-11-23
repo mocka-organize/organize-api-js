@@ -17,7 +17,7 @@ async function buscarUm(id) {
     try {
         return await prisma.consumos.findFirst({
             where: {
-                departamento_id: Number(id)
+                consumo_id: Number(id)
             }
         });
     } catch (error) {
@@ -45,7 +45,7 @@ async function editar(dados, id) {
     try {
         const result = await prisma.consumos.update({
             where: {
-                departamento_id: Number(id)
+                consumo_id: Number(id)
             },
             data: dados
         });
@@ -64,7 +64,7 @@ async function deletar(id) {
     try {
         const result = await prisma.consumos.delete({
             where: {
-                departamento_id: Number(id)
+                consumo_id: Number(id)
             }
         });
         if(result){
