@@ -23,6 +23,12 @@ app.get("/", (req, res) => {
     res.redirect("/docs");
 })
 
+app.get("/dados", rotaProtegida, async (req, res) => {
+    const clientes = await prisma.clientes.count();
+    const balcoes = await prisma.balcoes.count();
+    res.json({clientes, balcoes});
+})
+
 app.post("/login", express.json(), async (req, res) => {
     // #swagger.tags = ['Usuarios']
     // #swagger.description = "Retorna o token necessario para as requisicoes seguintes"
