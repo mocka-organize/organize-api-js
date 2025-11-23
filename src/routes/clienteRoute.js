@@ -1,6 +1,6 @@
 import express from "express";
 import multer from 'multer';
-import { buscarTodos, buscarUm, criar, deletar, reconhecimento } from "../controllers/clienteController.js";
+import { buscarTodos, buscarUm, criar, editar, deletar, reconhecimento } from "../controllers/clienteController.js";
 
 const router = express.Router();
 const storageFacial = multer.diskStorage({
@@ -55,6 +55,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", uploadFacial.single('foto'), async (req, res) => {
+    // #swagger.tags = ['Clientes']
     // #swagger.description = "Cria um registro"
     /* #swagger.consumes = ['multipart/form-data'] */
     /* #swagger.parameters['nome'] = { in: 'formData', type: 'string', required: true, description: 'Nome do cliente', example: 'nome' } */
@@ -70,7 +71,25 @@ router.post("/", uploadFacial.single('foto'), async (req, res) => {
     res.send(await criar(req));
 });
 
+router.put("/:id", uploadFacial.single('foto'), async (req, res) => {
+    // #swagger.tags = ['Clientes']
+    // #swagger.description = "Cria um registro"
+    /* #swagger.consumes = ['multipart/form-data'] */
+    /* #swagger.parameters['nome'] = { in: 'formData', type: 'string', required: true, description: 'Nome do cliente', example: 'nome' } */
+    /* #swagger.parameters['email'] = { in: 'formData', type: 'string', required: true, description: 'E-mail do cliente', example: 'email@email.com' } */
+    /* #swagger.parameters['foto'] = { in: 'formData', type: 'file', name: 'foto', required: true, description: 'Arquivo de imagem' } */
+    /* #swagger.responses[200] = {
+            description: 'Registro criado com sucesso',
+            schema: {
+                type: 'success',
+                description: 'Registro criado com sucesso.',
+            }
+    } */
+    res.send(await editar(req));
+});
+
 router.post("/reconhecimento", uploadReconhecimento.single('foto'), async (req, res) => {
+    // #swagger.tags = ['Clientes']
     // #swagger.description = "Reconheci um rosto na imagem"
     /* #swagger.consumes = ['multipart/form-data'] */
     /* #swagger.parameters['foto'] = { in: 'formData', type: 'file', name: 'foto', required: true, description: 'Arquivo de imagem para reconhecimento' } */
